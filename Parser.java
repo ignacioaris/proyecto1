@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * La clase Parser se encarga de analizar una cadena de texto que representa una expresion entre parentesis y se convierte en lista de tokens
+ * La clase Parser analiza una cadena de texto que representa una expresion entre parentesis y se convierte en lista de tokens
  * 
  * Soporta expresiones anidadas, números y símbolos
  */
@@ -27,7 +27,7 @@ public class Parser {
         // Eliminar el primer y último paréntesis
         String innerCode = code.substring(1, code.length() - 1).trim();
 
-        // Tokenizar el contenido interno
+        // Tokenizar el contenido que esta adentro
         tokens = tokenizeRecursive(innerCode);
         return tokens;
     }
