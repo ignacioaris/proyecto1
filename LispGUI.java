@@ -3,23 +3,33 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Interfaz gráfica de usuario para el intérprete LISP.
+ * Permite ingresar código LISP, ejecutarlo y visualizar la salida.
+ */
 public class LispGUI extends JFrame {
     private JTextArea codeArea;
     private JTextArea outputArea;
     private Interpreter interpreter;
 
+    /**
+     * Constructor que inicializa la interfaz gráfica y el intérprete.
+     */
     public LispGUI() {
         super("Intérprete LISP");
         interpreter = new Interpreter();
         initializeUI();
     }
 
+    /**
+     * Configura los componentes de la interfaz gráfica.
+     */
     private void initializeUI() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLayout(new BorderLayout());
 
-        // Panel superior para el código
+
         JPanel codePanel = new JPanel(new BorderLayout());
         codePanel.setBorder(BorderFactory.createTitledBorder("Código LISP"));
 
@@ -66,6 +76,9 @@ public class LispGUI extends JFrame {
         add(buttonPanel, BorderLayout.NORTH);
     }
 
+    /**
+     * Ejecuta el código LISP ingresado en el área de código y muestra la salida.
+     */
     private void runCode() {
         String code = codeArea.getText().trim();
         if (!code.isEmpty()) {
@@ -89,6 +102,10 @@ public class LispGUI extends JFrame {
         }
     }
 
+    /**
+     * Punto de entrada principal para la aplicación.
+     * @param args Argumentos de la línea de comandos (no utilizados).
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
