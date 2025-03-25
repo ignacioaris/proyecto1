@@ -1,4 +1,9 @@
 import java.util.List;
+
+/**
+ * La clase Interpreter maneja la entrada de codigo y el paso por otras clases
+ *
+ */
 public class Interpreter {
     private Parser parser;
     private Evaluator evaluator;
@@ -10,6 +15,10 @@ public class Interpreter {
         this.evaluator = new Evaluator(environment);
     }
 
+    /**
+     * metodo que corre el codigo
+     * @param code codigo LISP en forma de cadena
+     */
     public void run(String code) {
         try {
             List<Token> tokens = parser.tokenize(code);
@@ -20,3 +29,4 @@ public class Interpreter {
         }
     }
 }
+
