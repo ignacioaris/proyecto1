@@ -4,10 +4,11 @@ import java.util.StringTokenizer;
 
 /**
  * La clase Parser analiza una cadena de texto que representa una expresion entre parentesis y se convierte en lista de tokens
- * 
+ *
  * Soporta expresiones anidadas, números y símbolos
  */
 public class Parser {
+
 
     /**
      * Tokeniza una expresión de código que debe comenzar y terminar con paréntesis
@@ -17,19 +18,21 @@ public class Parser {
      * @throws RuntimeException si la expresión no comienza y termina con paréntesis
      */
     public List<Token> tokenize(String code) {
-        List<Token> tokens = new ArrayList<>();
-
-        // Verificar que la expresión comience con '(' y termine con ')'
-        if (!code.startsWith("(") || !code.endsWith(")")) {
-            throw new RuntimeException("Error: la expresión debe estar entre paréntesis");
+        // Validar balance de paréntesis primero
+        int balance = 0;
+        for (char c : code.toCharArray()) {
+            if (c == '(') balance++;
+            if (c == ')') balance--;
+            if (balance < 0) {
+                throw new RuntimeException("Error: paréntesis de cierre sin apertura");
+            }
+        }
+        if (balance != 0) {
+            throw new RuntimeException("Error: paréntesis no balanceados");
         }
 
-        // Eliminar el primer y último paréntesis
-        String innerCode = code.substring(1, code.length() - 1).trim();
-
-        // Tokenizar el contenido que esta adentro
-        tokens = tokenizeRecursive(innerCode);
-        return tokens;
+        // Eliminar la validación que requiere que todo el código esté entre paréntesis
+        return tokenizeRecursive(code);
     }
 
     /**
@@ -45,11 +48,9 @@ public class Parser {
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken().trim();
             if (!token.isEmpty()) {
-                if (token.equals("(")) {
-                    // Encontrar la expresión anidada
-                    String nestedExpr = readNestedExpression(tokenizer);
-                    tokens.add(new Token("EXPRESSION", nestedExpr));
-                } else if (token.matches("-?\\d+")) {
+                if (token.equals("(") || token.equals(")")) {
+                    tokens.add(new Token("PARENTHESIS", token));
+                } else if (token.matches("-?\\d+")) { // Soporta valores negativos
                     tokens.add(new Token("NUMBER", token));
                 } else {
                     tokens.add(new Token("SYMBOL", token));
@@ -57,32 +58,5 @@ public class Parser {
             }
         }
         return tokens;
-    }
-
-    /**
-     * Lee una expresión anidada completa desde el tokenizer, incluyendo paréntesis 
-     *
-     * @param tokenizer el StringTokenizer que contiene los tokens restantes
-     * @return una cadena que representa la expresión anidada completa
-     */
-    private String readNestedExpression(StringTokenizer tokenizer) {
-        StringBuilder nestedExpr = new StringBuilder("(");
-        int parenthesisCount = 1;
-
-        while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken().trim();
-            nestedExpr.append(token);
-
-            if (token.equals("(")) {
-                parenthesisCount++;
-            } else if (token.equals(")")) {
-                parenthesisCount--;
-                if (parenthesisCount == 0) {
-                    break;
-                }
-            }
-        }
-
-        return nestedExpr.toString();
     }
 }
