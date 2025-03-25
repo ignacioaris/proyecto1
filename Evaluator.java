@@ -120,6 +120,14 @@ public class Evaluator {
         return "Error: token no válido - " + currentToken.getValue();
     }
 
+    /**
+     * Evalúa una llamada a función definida por el usuario.
+     * @param tokens Lista de tokens que representan la llamada a función.
+     * @param startIndex Índice donde comienza la llamada a función.
+     * @param parameters Lista de parámetros formales de la función.
+     * @param body Cuerpo de la función a evaluar.
+     * @return Resultado de la evaluación de la función.
+     */
     private String evaluateFunctionCall(List<Token> tokens, int startIndex,
                                         List<Token> parameters, List<Token> body) {
         // Control de profundidad
@@ -171,6 +179,13 @@ public class Evaluator {
         }
     }
 
+    /**
+     * Evalúa una expresión acumulando resultados parciales.
+     * @param tokens Lista de tokens a evaluar.
+     * @param startIndex Índice donde comenzar la evaluación.
+     * @param previousResult Resultado acumulado hasta el momento.
+     * @return Resultado final de la evaluación.
+     */
     private String evaluateExpressionWithResult(List<Token> tokens, int startIndex, String previousResult) {
         if (startIndex >= tokens.size()) {
             return previousResult;
@@ -213,6 +228,12 @@ public class Evaluator {
         return "Error: token no válido";
     }
 
+    /**
+     * Encuentra el paréntesis de cierre que coincide con uno de apertura.
+     * @param tokens Lista de tokens donde buscar.
+     * @param startIndex Índice del paréntesis de apertura.
+     * @return Índice del paréntesis de cierre o -1 si no se encuentra.
+     */
     private int findMatchingParenthesis(List<Token> tokens, int startIndex) {
         int parenthesisCount = 1;
         for (int i = startIndex + 1; i < tokens.size(); i++) {
@@ -231,6 +252,12 @@ public class Evaluator {
         return -1;
     }
 
+    /**
+     * Evalúa una operación de suma (+).
+     * @param tokens Lista de tokens que representan la operación.
+     * @param startIndex Índice donde comienza la operación.
+     * @return Resultado de la suma como cadena.
+     */
     private String evaluateSum(List<Token> tokens, int startIndex) {
         if (tokens.size() < startIndex + 1) {
             return "Error: suma requiere al menos un operando";
@@ -261,6 +288,12 @@ public class Evaluator {
         return String.valueOf(result);
     }
 
+    /**
+     * Evalúa una operación de resta (-).
+     * @param tokens Lista de tokens que representan la operación.
+     * @param startIndex Índice donde comienza la operación.
+     * @return Resultado de la resta como cadena.
+     */
     private String evaluateRest(List<Token> tokens, int startIndex) {
         if (tokens.size() < startIndex + 1) {
             return "Error: resta requiere al menos un operando";
@@ -283,6 +316,12 @@ public class Evaluator {
         return String.valueOf(result);
     }
 
+    /**
+     * Evalúa una operación de multiplicación (*).
+     * @param tokens Lista de tokens que representan la operación.
+     * @param startIndex Índice donde comienza la operación.
+     * @return Resultado de la multiplicación como cadena.
+     */
     private String evaluateMult(List<Token> tokens, int startIndex) {
         if (tokens.size() < startIndex + 1) {
             return "Error: multiplicación requiere al menos un operando";
@@ -307,6 +346,12 @@ public class Evaluator {
         return String.valueOf(result);
     }
 
+    /**
+     * Evalúa una operación de división (/).
+     * @param tokens Lista de tokens que representan la operación.
+     * @param startIndex Índice donde comienza la operación.
+     * @return Resultado de la división como cadena.
+     */
     private String evaluateDiv(List<Token> tokens, int startIndex) {
         String firstResult = evaluateToken(tokens, startIndex);
         if (firstResult.startsWith("Error")) {
@@ -329,6 +374,12 @@ public class Evaluator {
         return String.valueOf(result);
     }
 
+    /**
+     * Evalúa una operación de potencia (^).
+     * @param tokens Lista de tokens que representan la operación.
+     * @param startIndex Índice donde comienza la operación.
+     * @return Resultado de la potencia como cadena.
+     */
     private String evaluatePow(List<Token> tokens, int startIndex) {
         String firstResult = evaluateToken(tokens, startIndex);
         if (firstResult.startsWith("Error")) {
@@ -347,6 +398,12 @@ public class Evaluator {
         return String.valueOf(result);
     }
 
+    /**
+     * Evalúa una operación de módulo (%).
+     * @param tokens Lista de tokens que representan la operación.
+     * @param startIndex Índice donde comienza la operación.
+     * @return Resultado del módulo como cadena.
+     */
     private String evaluateMod(List<Token> tokens, int startIndex) {
         String firstResult = evaluateToken(tokens, startIndex);
         if (firstResult.startsWith("Error")) {
@@ -369,6 +426,12 @@ public class Evaluator {
         return String.valueOf(result);
     }
 
+    /**
+     * Evalúa una operación de asignación (setq).
+     * @param tokens Lista de tokens que representan la operación.
+     * @param startIndex Índice donde comienza la operación.
+     * @return Mensaje de confirmación de asignación.
+     */
     private String evaluateSetq(List<Token> tokens, int startIndex) {
         if (tokens.size() < startIndex + 2) {
             return "Error: setq mal formado";
@@ -416,17 +479,35 @@ public class Evaluator {
         return "Variable " + varName + " asignada";
     }
 
+    /**
+     * Evalúa una operación de impresión (print).
+     * @param tokens Lista de tokens que representan la operación.
+     * @param startIndex Índice donde comienza la operación.
+     * @return Valor que se imprimió.
+     */
     private String evaluatePrint(List<Token> tokens, int startIndex) {
         String result = evaluateToken(tokens, startIndex);
         System.out.println(result);
         return result;
     }
 
+    /**
+     * Avanza el índice saltando tokens ya procesados (expresiones anidadas).
+     * @param tokens Lista de tokens.
+     * @param index Índice actual.
+     * @return Nuevo índice después de saltar tokens procesados.
+     */
     private int skipProcessedTokens(List<Token> tokens, int index) {
         int endIndex = findMatchingParenthesis(tokens, index);
         return endIndex != -1 ? endIndex : index;
     }
 
+    /**
+     * Evalúa un token individual o expresión anidada.
+     * @param tokens Lista de tokens.
+     * @param index Índice del token a evaluar.
+     * @return Resultado de la evaluación del token.
+     */
     private String evaluateToken(List<Token> tokens, int index) {
         if (index >= tokens.size()) {
             return "Error: índice fuera de rango";
@@ -463,6 +544,12 @@ public class Evaluator {
         return "Error: token no válido";
     }
 
+    /**
+     * Evalúa una definición de función (defun).
+     * @param tokens Lista de tokens que representan la definición.
+     * @param startIndex Índice donde comienza la definición.
+     * @return Mensaje de confirmación de definición.
+     */
     private String evaluateDefun(List<Token> tokens, int startIndex) {
         if (tokens.size() < startIndex + 3) {
             return "Error: defun mal formado";
@@ -495,8 +582,12 @@ public class Evaluator {
         return "Función " + functionName + " definida";
     }
 
-    // En Evaluator.java
-
+    /**
+     * Evalúa una estructura condicional (if).
+     * @param tokens Lista de tokens que representan la condición.
+     * @param startIndex Índice donde comienza la condición.
+     * @return Resultado de la rama evaluada.
+     */
     private String evaluateIf(List<Token> tokens, int startIndex) {
         // Verificar estructura básica
         if (tokens.size() < startIndex + 3) {
@@ -545,7 +636,11 @@ public class Evaluator {
         }
     }
 
-    // Método auxiliar para determinar si un valor es "truthy"
+    /**
+     * Determina si un valor se considera "verdadero" en LISP.
+     * @param value Valor a evaluar.
+     * @return true si el valor es truthy, false en caso contrario.
+     */
     private boolean isTruthy(String value) {
         if (value == null || value.isEmpty()) {
             return false;
@@ -558,7 +653,7 @@ public class Evaluator {
         }
     }
 
-    // Modificar los operadores de comparación para devolver "1" o "0"
+
     private String evaluateGreaterThan(List<Token> tokens, int startIndex) {
         if (tokens.size() < startIndex + 2) {
             return "Error: > requiere dos operandos";
